@@ -86,15 +86,19 @@ func createPokemon(columnPosition int, columnValue string) error {
 
 	case 2:
 
+		createdPokemon.GrowthRatio = columnValue
+
+	case 3:
+
 		hpValue, err := strconv.Atoi(columnValue)
 
 		if err != nil {
 			return fmt.Errorf("[createPokemon | HP] error: %v", err)
 		}
 
-		createdPokemon.HP = createHPPhases(hpValue)
+		createdPokemon.HP = createHPPhases(hpValue, createdPokemon.GrowthRatio)
 
-	case 3:
+	case 4:
 
 		attack, err := strconv.Atoi(columnValue)
 
@@ -102,9 +106,9 @@ func createPokemon(columnPosition int, columnValue string) error {
 			return fmt.Errorf("[createPokemon | Attack] error: %v", err)
 		}
 
-		createdPokemon.Attack = createNonHpPhases(attack)
+		createdPokemon.Attack = createNonHpPhases(attack, createdPokemon.GrowthRatio)
 
-	case 4:
+	case 5:
 
 		defense, err := strconv.Atoi(columnValue)
 
@@ -112,9 +116,9 @@ func createPokemon(columnPosition int, columnValue string) error {
 			return fmt.Errorf("[createPokemon | Defense] error: %v", err)
 		}
 
-		createdPokemon.Defense = createNonHpPhases(defense)
+		createdPokemon.Defense = createNonHpPhases(defense, createdPokemon.GrowthRatio)
 
-	case 5:
+	case 6:
 
 		spAttack, err := strconv.Atoi(columnValue)
 
@@ -122,9 +126,9 @@ func createPokemon(columnPosition int, columnValue string) error {
 			return fmt.Errorf("[createPokemon | SpAttack] error: %v", err)
 		}
 
-		createdPokemon.SpAttack = createNonHpPhases(spAttack)
+		createdPokemon.SpAttack = createNonHpPhases(spAttack, createdPokemon.GrowthRatio)
 
-	case 6:
+	case 7:
 
 		spDefense, err := strconv.Atoi(columnValue)
 
@@ -132,9 +136,9 @@ func createPokemon(columnPosition int, columnValue string) error {
 			return fmt.Errorf("[createPokemon | SpDefense] error: %v", err)
 		}
 
-		createdPokemon.SpDefense = createNonHpPhases(spDefense)
+		createdPokemon.SpDefense = createNonHpPhases(spDefense, createdPokemon.GrowthRatio)
 
-	case 7:
+	case 8:
 
 		speed, err := strconv.Atoi(columnValue)
 
@@ -142,7 +146,7 @@ func createPokemon(columnPosition int, columnValue string) error {
 			return fmt.Errorf("[createPokemon | Speed] error: %v", err)
 		}
 
-		createdPokemon.Speed = createNonHpPhases(speed)
+		createdPokemon.Speed = createNonHpPhases(speed, createdPokemon.GrowthRatio)
 
 	}
 
@@ -150,17 +154,44 @@ func createPokemon(columnPosition int, columnValue string) error {
 
 }
 
-func createHPPhases(statValue int) []int {
+func createHPPhases(statValue int, GrowthRatio string) []int {
 
 	statPhases := make([]int, 10, 10)
 
 	for i := 0; i < 10; i++ {
 
-		var hp float64
+		hp := float64((((2 * statValue) + 31) * ((i * 10) + 10) / 100) + (i*10 + 10) + 10)
 
-		hp = float64((((2 * statValue) + 31) * ((i * 10) + 10) / 100) + (i*10 + 10) + 10)
+		finalHp := int(math.Round(hp / 5))
 
-		statPhases[i] = int(math.Round(hp / 5))
+		switch GrowthRatio {
+		case "Rápido":
+			if i == 1 {
+				finalHp += 2
+			} else if i == 0 || i == 2 {
+				finalHp += 1
+			}
+		case "Medio":
+			if i == 3 {
+				finalHp += 2
+			} else if i == 2 || i == 4 {
+				finalHp += 1
+			}
+		case "Parabólico":
+			if i == 5 {
+				finalHp += 2
+			} else if i == 4 || i == 6 {
+				finalHp += 1
+			}
+		case "Lento":
+			if i == 7 {
+				finalHp += 2
+			} else if i == 6 || i == 8 {
+				finalHp += 1
+			}
+		}
+
+		statPhases[i] = finalHp
 
 	}
 
@@ -168,17 +199,44 @@ func createHPPhases(statValue int) []int {
 
 }
 
-func createNonHpPhases(statValue int) []int {
+func createNonHpPhases(statValue int, GrowthRatio string) []int {
 
 	statPhases := make([]int, 10, 10)
 
 	for i := 0; i < 10; i++ {
 
-		var nonHP float64
+		nonHP := float64((((2 * statValue) + 31) * ((i * 10) + 10) / 100) + 5)
 
-		nonHP = float64((((2 * statValue) + 31) * ((i * 10) + 10) / 100) + 5)
+		finalNonHp := int(math.Round(nonHP / 10))
 
-		statPhases[i] = int(math.Round(nonHP / 10))
+		switch GrowthRatio {
+		case "Rápido":
+			if i == 1 {
+				finalNonHp += 2
+			} else if i == 0 || i == 2 {
+				finalNonHp += 1
+			}
+		case "Medio":
+			if i == 3 {
+				finalNonHp += 2
+			} else if i == 2 || i == 4 {
+				finalNonHp += 1
+			}
+		case "Parabólico":
+			if i == 5 {
+				finalNonHp += 2
+			} else if i == 4 || i == 6 {
+				finalNonHp += 1
+			}
+		case "Lento":
+			if i == 7 {
+				finalNonHp += 2
+			} else if i == 6 || i == 8 {
+				finalNonHp += 1
+			}
+		}
+
+		statPhases[i] = finalNonHp
 
 	}
 

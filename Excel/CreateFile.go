@@ -2,6 +2,7 @@ package excel
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -51,7 +52,7 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 
 		cell := fmt.Sprintf("A%v", pokemonIndex+2)
 
-		err := f.SetCellValue(os.Getenv("create_sheet"), cell, p.Name)
+		err := f.SetCellValue(os.Getenv("create_sheet"), cell, p.ID)
 
 		if err != nil {
 			return fmt.Errorf("[setCellValue] error: %v", err)
@@ -61,7 +62,7 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 
 		cell := fmt.Sprintf("B%v", pokemonIndex+2)
 
-		err := f.SetCellValue(os.Getenv("create_sheet"), cell, p.ID)
+		err := f.SetCellValue(os.Getenv("create_sheet"), cell, p.Name)
 
 		if err != nil {
 			return fmt.Errorf("[setCellValue] error: %v", err)
@@ -71,9 +72,7 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 
 		cell := fmt.Sprintf("C%v", pokemonIndex+2)
 
-		arr := arrayToString(p.HP, "|")
-
-		err := f.SetCellValue(os.Getenv("create_sheet"), cell, arr)
+		err := f.SetCellValue(os.Getenv("create_sheet"), cell, p.GrowthRatio)
 
 		if err != nil {
 			return fmt.Errorf("[setCellValue] error: %v", err)
@@ -83,7 +82,7 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 
 		cell := fmt.Sprintf("D%v", pokemonIndex+2)
 
-		arr := arrayToString(p.Attack, "|")
+		arr := arrayToString(p.HP, "|")
 
 		err := f.SetCellValue(os.Getenv("create_sheet"), cell, arr)
 
@@ -92,10 +91,9 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 		}
 
 	case 4:
-
 		cell := fmt.Sprintf("E%v", pokemonIndex+2)
 
-		arr := arrayToString(p.Defense, "|")
+		arr := arrayToString(p.Attack, "|")
 
 		err := f.SetCellValue(os.Getenv("create_sheet"), cell, arr)
 
@@ -107,7 +105,7 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 
 		cell := fmt.Sprintf("F%v", pokemonIndex+2)
 
-		arr := arrayToString(p.SpAttack, "|")
+		arr := arrayToString(p.Defense, "|")
 
 		err := f.SetCellValue(os.Getenv("create_sheet"), cell, arr)
 
@@ -116,10 +114,9 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 		}
 
 	case 6:
-
 		cell := fmt.Sprintf("G%v", pokemonIndex+2)
 
-		arr := arrayToString(p.SpDefense, "|")
+		arr := arrayToString(p.SpAttack, "|")
 
 		err := f.SetCellValue(os.Getenv("create_sheet"), cell, arr)
 
@@ -130,6 +127,18 @@ func setCellValue(f *excelize.File, pokemonIndex, excelIndex int, p model.Create
 	case 7:
 
 		cell := fmt.Sprintf("H%v", pokemonIndex+2)
+
+		arr := arrayToString(p.SpDefense, "|")
+
+		err := f.SetCellValue(os.Getenv("create_sheet"), cell, arr)
+
+		if err != nil {
+			return fmt.Errorf("[setCellValue] error: %v", err)
+		}
+
+	case 8:
+
+		cell := fmt.Sprintf("I%v", pokemonIndex+2)
 
 		arr := arrayToString(p.Speed, "|")
 
@@ -158,6 +167,8 @@ func setDefaultRow(f *excelize.File, errors []error) []error {
 		err := f.SetCellValue(os.Getenv("create_sheet"), coord, cellName)
 
 		if err != nil {
+
+			log.Println(err)
 
 			errors = append(errors, fmt.Errorf("[setDefaultRow | setCellValue] error: %v", err))
 

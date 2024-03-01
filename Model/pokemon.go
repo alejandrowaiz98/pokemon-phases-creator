@@ -1,13 +1,13 @@
 package model
 
 type PokemonToCreate struct {
-	Name                                                string
+	Name, GrowthRatio                                   string
 	ID, HP, Attack, Defense, SpAttack, SpDefense, Speed int
 }
 
 type CreatedPokemon struct {
 	//All arrays represent the 10 phases of each pokemon
-	Name                                            string
+	Name, GrowthRatio                               string
 	ID                                              int
 	HP, Attack, Defense, SpAttack, SpDefense, Speed []int
 }
